@@ -1,5 +1,15 @@
 import { createApp } from 'vue'
-import './style.css'
 import App from './App.vue'
+import './style.css'
+import router from './router'
+// import i18n, { loadLocaleMessages } from '@/lib/i18n'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.use(router)
+// app.use(VCalendar, {})
+// app.use(i18n)
+
+// loadLocaleMessages(localStorage.getItem('lang') || 'ru')
+
+app.mount('#app')
