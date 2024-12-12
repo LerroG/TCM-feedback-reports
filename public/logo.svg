@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="631.25537"
+   height="515.57245"
+   viewBox="0 0 631.25537 515.57245"
+   sodipodi:docname="TCM_logo.png"
+   inkscape:export-filename="TCM_logo.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Image 1"
+     inkscape:export-filename="TCM-logo-2.svg"
+     inkscape:export-xdpi="96"
+     inkscape:export-ydpi="96"
+     transform="translate(-0.52459991,-3.3518877)">
+    <g
+       id="g4"
+       transform="matrix(1.1934581,0,0,1.1934581,-60.378832,-49.879456)">
+      <g
+         id="g3"
+         transform="translate(0,-1.614201)">
+        <path
+           style="fill:#000000"
+           d="m 51.03106,46.216809 v 99.173571 c 0,0 11.233252,-70.288066 90.34744,-99.013096 z"
+           id="path1"
+           sodipodi:nodetypes="cccc" />
+        <path
+           style="fill:#000000;fill-opacity:1"
+           d="m 167.25918,46.523923 c 0,0 100.51642,16.631952 102.01792,174.289717 1.2838,134.79903 0,257.40195 0,257.40195 h 31.13216 V 244.243 c 0,0 2.5676,-47.82156 15.08465,-80.55847 C 286.92935,95.643113 253.95989,47.472937 167.25918,46.523923 Z"
+           id="path2"
+           sodipodi:nodetypes="csccccc" />
+      </g>
+      <g
+         id="g2"
+         transform="translate(-19.176766)">
+        <path
+           style="fill:#000000"
+           d="m 599.13748,44.602608 v 99.173572 c 0,0 -11.23325,-70.288068 -90.34744,-99.013102 z"
+           id="path1-1"
+           sodipodi:nodetypes="cccc" />
+        <path
+           style="fill:#000000;fill-opacity:1"
+           d="m 482.90936,44.909718 c 0,0 -100.51642,16.631955 -102.01792,174.289722 -1.2838,134.79903 0,257.40195 0,257.40195 H 349.75928 V 242.6288 c 0,0 -2.5676,-47.82156 -15.08465,-80.55847 C 363.23919,94.028911 396.20865,45.858738 482.90936,44.909718 Z"
+           id="path2-3"
+           sodipodi:nodetypes="csccccc" />
+      </g>
+    </g>
+  </g>
+</svg>
