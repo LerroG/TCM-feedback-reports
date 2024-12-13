@@ -1,49 +1,69 @@
 <script setup lang="ts">
+import { authService } from '@/services/auth.service'
+import { IAuthForm } from '@/types/auth.interface'
 import type { FormInst, FormRules } from 'naive-ui'
-import { NForm, NFormItem, NInput, NButton, NSpace, NH1 } from 'naive-ui'
-import { useMessage } from 'naive-ui'
+import {
+	NForm,
+	NFormItem,
+	NInput,
+	NButton,
+	NSpace,
+	NH1,
+	useMessage,
+	useNotification
+} from 'naive-ui'
 import { ref } from 'vue'
 
-interface ModelType {
-	username: string
-	password: string
-}
-
-const formRef = ref<FormInst | null>(null)
+const { error } = useNotification()
 const message = useMessage()
-const formValue = ref<ModelType>({
-	username: '',
-	password: ''
+
+const isLoading = ref(false)
+const formRef = ref<FormInst | null>(null)
+const formValue = ref<IAuthForm>({
+	Username: '',
+	Password: ''
 })
 
 const rules: FormRules = {
-	username: {
+	Username: {
 		required: true,
-		message: 'Пожалуйста введите имя пользователя',
+		message: 'Пожалуйста, введите имя пользователя',
 		trigger: 'blur'
 	},
-	password: [
-		{
-			required: true,
-			message: 'Пожалуйста введите пароль',
-			trigger: 'blur'
-		},
-		{
-			min: 6,
-			message: 'Пароль должен содержать не менее 3 символов',
-			trigger: 'blur'
-		}
-	]
+	Password: {
+		required: true,
+		message: 'Пожалуйста, введите пароль',
+		trigger: 'blur'
+	}
 }
 
-const handleSubmit = (e: MouseEvent) => {
+const handleSubmit = async (e: MouseEvent) => {
 	e.preventDefault()
-	formRef.value?.validate(errors => {
-		if (!errors) {
-			message.success('Вход выполнен')
-		} else {
-			console.log(errors)
+
+	formRef.value?.validate(async errors => {
+		if (errors) {
 			message.error('Неверные данные')
+			return
+		}
+
+		isLoading.value = true
+
+		try {
+			const response = await authService.login(formValue.value)
+
+			// Обработка ошибок от сервера
+			if (response && response.data.Code < 0) {
+				error({
+					title: 'Произошла ошибка',
+					content: response.data.Msg,
+					duration: 3000,
+					keepAliveOnHover: true
+				})
+			}
+		} catch (error) {
+			message.error('Ошибка при входе. Попробуйте снова!')
+		} finally {
+			isLoading.value = false
 		}
 	})
 }
@@ -54,22 +74,17 @@ const handleSubmit = (e: MouseEvent) => {
 		<div class="w-full xl:w-1/2 flex justify-center items-center">
 			<n-space class="w-4/5 md:w-2/5 2xl:w-1/3" vertical>
 				<n-h1 class="font-bold text-5xl text-center">Вход</n-h1>
-				<n-form
-					:label-width="100"
-					ref="formRef"
-					:model="formValue"
-					:rules="rules"
-				>
-					<n-form-item label="Имя пользователя" path="username">
+				<n-form ref="formRef" :model="formValue" :rules="rules">
+					<n-form-item label="Имя пользователя" path="Username">
 						<n-input
-							v-model:value="formValue.username"
+							v-model:value="formValue.Username"
 							placeholder="Имя пользователя"
 							round
 						/>
 					</n-form-item>
-					<n-form-item label="Пароль" path="password">
+					<n-form-item label="Пароль" path="Password">
 						<n-input
-							v-model:value="formValue.password"
+							v-model:value="formValue.Password"
 							show-password-on="click"
 							type="password"
 							placeholder="Пароль"
@@ -77,7 +92,13 @@ const handleSubmit = (e: MouseEvent) => {
 						/>
 					</n-form-item>
 					<n-space justify="center">
-						<n-button round @click="handleSubmit" type="primary" size="large">
+						<n-button
+							round
+							@click="handleSubmit"
+							type="primary"
+							size="large"
+							:loading="isLoading"
+						>
 							Войти
 						</n-button>
 					</n-space>
@@ -92,7 +113,7 @@ const handleSubmit = (e: MouseEvent) => {
 	background-image: url('/auth-bg.png');
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1280px) {
 	.bg_image {
 		background-image: none;
 	}

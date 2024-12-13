@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue'
-import { NMessageProvider, NConfigProvider } from 'naive-ui'
+import {
+	NMessageProvider,
+	NConfigProvider,
+	NNotificationProvider
+} from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { ref } from 'vue'
 
@@ -18,11 +22,13 @@ const themeOverrides = ref<GlobalThemeOverrides>({
 	<AppLayout>
 		<RouterView v-slot="{ Component }">
 			<n-message-provider>
-				<n-config-provider :theme-overrides="themeOverrides" abstract>
-					<Transition mode="out-in">
-						<component :is="Component" />
-					</Transition>
-				</n-config-provider>
+				<n-notification-provider>
+					<n-config-provider :theme-overrides="themeOverrides" abstract>
+						<Transition mode="out-in">
+							<component :is="Component" />
+						</Transition>
+					</n-config-provider>
+				</n-notification-provider>
 			</n-message-provider>
 		</RouterView>
 	</AppLayout>
