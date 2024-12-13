@@ -3,7 +3,6 @@ import { loadLayoutMiddleware } from '@/router/middleware/loadLayout.middleware'
 import { RouteNamesEnum } from '@/router/router.types'
 import { AppLayoutsEnum } from '@/layouts/layouts.types'
 // import type { RouteLocationNormalized } from 'vue-router'
-// import { ROUTE_URL } from '@/config/url.config'
 // import i18n from '@/lib/i18n'
 // import { watch } from 'vue'
 
@@ -36,10 +35,11 @@ const router = createRouter({
 
 router.beforeEach(loadLayoutMiddleware)
 
-// router.beforeEach(to => {
-// 	const titleKey = to.meta.titleKey as string
-// 	document.title = i18n.global.t(titleKey)
-// })
+router.beforeEach(to => {
+	document.title = to.meta.titleKey as string
+	// const titleKey = to.meta.titleKey as string
+	// document.title = i18n.global.t(titleKey)
+})
 
 // router.beforeEach((to, _, next) => {
 // 	const token = localStorage.getItem('token')

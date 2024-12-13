@@ -1,7 +1,11 @@
-<script setup lang="ts"></script>
-
 <template>
-	<main class="w-screen h-screen flex justify-center items-center">
+	<main class="bg_image w-screen h-screen">
 		<slot />
 	</main>
 </template>
+
+<!-- <style scoped>
+.bg_image {
+	background-image: url('/auth-bg.png');
+}
+</style> -->

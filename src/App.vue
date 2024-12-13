@@ -1,11 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue'
+import { NMessageProvider, NConfigProvider } from 'naive-ui'
+import type { GlobalThemeOverrides } from 'naive-ui'
+import { ref } from 'vue'
+
+const themeOverrides = ref<GlobalThemeOverrides>({
+	common: {
+		primaryColor: '#bb7e69',
+		primaryColorHover: '#a5634c',
+		primaryColorPressed: '#8f4f3c',
+		primaryColorSuppl: '#d0a18c'
+	}
+})
+</script>
 
 <template>
 	<AppLayout>
 		<RouterView v-slot="{ Component }">
-			<Transition mode="out-in">
-				<component :is="Component" />
-			</Transition>
+			<n-message-provider>
+				<n-config-provider :theme-overrides="themeOverrides" abstract>
+					<Transition mode="out-in">
+						<component :is="Component" />
+					</Transition>
+				</n-config-provider>
+			</n-message-provider>
 		</RouterView>
 	</AppLayout>
 </template>
