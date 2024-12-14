@@ -51,7 +51,7 @@ const columnsFeedbacks: DataTableColumns<IFeedbackResponse> = [
 	{
 		title: 'Lang',
 		key: 'Lang',
-		align: 'center',
+		align: 'center'
 	},
 	{
 		title: 'Date',
@@ -68,16 +68,17 @@ const columnsFeedbackStat: DataTableColumns<IFeedbackStatResponse> = [
 	{
 		title: 'Question',
 		key: 'Question',
-		className: 'w-96'
-	},
-	{
-		title: 'TotalAnswersCount',
-		key: 'TotalAnswersCount',
-		align: 'center'
+		className: 'w-96',
+		rowSpan: (_, rowIndex) => (rowIndex === 0 ? 2 : 1)
 	},
 	{
 		title: 'AnswerData',
 		key: 'AnswerData',
+		align: 'center'
+	},
+	{
+		title: 'TotalAnswersCount',
+		key: 'TotalAnswersCount',
 		align: 'center'
 	}
 ]
@@ -114,8 +115,15 @@ watch([dateRange, selectValue], () => {
 				<n-select v-model:value="selectValue" :options="language" />
 			</div>
 		</div>
-		<!-- <n-card class="w-1/3" title="Все оценки"> </n-card> -->
-		<div class="flex w-full">
+		<div>
+			<n-data-table
+				:columns="columnsFeedbackStat"
+				:data="feedbackStore.feedbackStat?.Data"
+				:max-height="500"
+				virtual-scroll
+			/>
+		</div>
+		<!-- <div>
 			<n-data-table
 				class="w-1/2 mb-4"
 				:columns="columnsFeedbackStat"
@@ -123,15 +131,14 @@ watch([dateRange, selectValue], () => {
 				:max-height="500"
 				virtual-scroll
 			/>
-		</div>
-		<div class="flex w-full">
-			<n-data-table
-				class="w-1/2"
-				:columns="columnsFeedbacks"
-				:data="feedbackStore.feedbacks?.Data"
-				:max-height="500"
-				virtual-scroll
-			/>
-		</div>
+		</div> -->
+		<!-- <div class="w-full flex"> -->
+		<!-- <n-data-table
+			:columns="columnsFeedbacks"
+			:data="feedbackStore.feedbacks?.Data"
+			:max-height="500"
+			virtual-scroll
+		/> -->
+		<!-- </div> -->
 	</div>
 </template>
