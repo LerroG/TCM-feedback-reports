@@ -49,6 +49,11 @@ const columnsFeedbacks: DataTableColumns<IFeedbackResponse> = [
 		align: 'center'
 	},
 	{
+		title: 'Lang',
+		key: 'Lang',
+		align: 'center',
+	},
+	{
 		title: 'Date',
 		key: 'Date',
 		align: 'center'
