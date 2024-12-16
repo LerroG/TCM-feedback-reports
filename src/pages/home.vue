@@ -4,7 +4,17 @@ import type { DataTableColumns } from 'naive-ui'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { computed, onMounted, ref, watch } from 'vue'
 import { formatTimestamp } from '@/utils/format-timestamp'
+import FeedbacksChart from '@/components/FeedbacksChart.vue'
 import { useRoute } from 'vue-router'
+import { IFeedbackItem, IFeedbackResponse } from '@/types/feedback.interface'
+
+type Language = 'ru' | 'en' | 'uz'
+
+const languageMap: Record<Language, string> = {
+	ru: 'Русский',
+	en: 'English',
+	uz: "O'zbek"
+}
 
 const route = useRoute()
 
@@ -27,38 +37,41 @@ const language = [
 
 const feedbackStore = useFeedbackStore()
 
-// const columnsFeedbacks: DataTableColumns<IFeedbackResponse> = [
-// 	{
-// 		title: 'Question',
-// 		key: 'Question',
-// 		className: 'w-96'
-// 	},
-// 	{
-// 		title: 'Answer',
-// 		key: 'Answer',
-// 		align: 'center'
-// 	},
-// 	{
-// 		title: 'DeviceName',
-// 		key: 'DeviceName',
-// 		align: 'center'
-// 	},
-// 	{
-// 		title: 'Lang',
-// 		key: 'Lang',
-// 		align: 'center'
-// 	},
-// 	{
-// 		title: 'Date',
-// 		key: 'Date',
-// 		align: 'center'
-// 	},
-// 	{
-// 		title: 'Time',
-// 		key: 'Time',
-// 		align: 'center'
-// 	}
-// ]
+const columnsFeedbacks: DataTableColumns<IFeedbackItem> = [
+	{
+		title: 'Question',
+		key: 'Question',
+		className: 'w-80'
+	},
+	{
+		title: 'Answer',
+		key: 'Answer',
+		align: 'center'
+	},
+	{
+		title: 'DeviceName',
+		key: 'DeviceName',
+		align: 'center'
+	},
+	{
+		title: 'Lang',
+		key: 'Lang',
+		align: 'center',
+		render(row) {
+			return languageMap[row.Lang as keyof typeof languageMap] || row.Lang // Если язык не найден в map, показываем код
+		}
+	},
+	{
+		title: 'Date',
+		key: 'Date',
+		align: 'center'
+	},
+	{
+		title: 'Time',
+		key: 'Time',
+		align: 'center'
+	}
+]
 
 const columns: DataTableColumns<typeof tableData> = [
 	{
@@ -128,9 +141,7 @@ watch([dateRange, selectLang], () => {
 
 <template>
 	<div>
-		<div
-			class="w-full flex items-center justify-between p-4 bg-white mb-6 sticky"
-		>
+		<div class="w-full flex items-center justify-between p-4 bg-white sticky">
 			<div class="w-1/4">
 				<div class="text-base mb-1">Выберите париод</div>
 				<n-date-picker
@@ -147,7 +158,7 @@ watch([dateRange, selectLang], () => {
 				<n-select v-model:value="selectLang" :options="language" />
 			</div>
 		</div>
-		<div class="w-full">
+		<div class="w-full flex gap-2 my-6">
 			<div class="w-1/2">
 				<h1 class="text-center text-2xl font-bold mb-4">Статистика отзывов</h1>
 				<n-data-table
@@ -159,23 +170,31 @@ watch([dateRange, selectLang], () => {
 					virtual-scroll
 				/>
 			</div>
+			<!-- <div class="w-1/2">
+				<h1 class="text-center text-2xl font-bold mb-4">График отзывов</h1>
+				<div class="bg-white w-full h-[550px] p-4">
+					<FeedbacksChart />
+				</div>
+			</div> -->
 		</div>
-		<!-- <div>
-			<n-data-table
-				class="w-1/2 mb-4"
-				:columns="columnsFeedbackStat"
-				:data="feedbackStore.feedbackStat?.Data"
-				:max-height="500"
-				virtual-scroll
-			/>
-		</div> -->
-		<!-- <div class="w-full flex"> -->
-		<!-- <n-data-table
-			:columns="columnsFeedbacks"
-			:data="feedbackStore.feedbacks?.Data"
-			:max-height="500"
-			virtual-scroll
-		/> -->
-		<!-- </div> -->
+		<div class="w-full flex gap-2 my-6">
+			<div class="w-1/2">
+				<h1 class="text-center text-2xl font-bold mb-4">Все отзывы</h1>
+				<n-data-table
+					:columns="columnsFeedbacks"
+					:data="feedbackStore.feedbacks?.Data"
+					:max-height="500"
+					:single-line="false"
+					:bordered="false"
+					virtual-scroll
+				/>
+			</div>
+			<!-- <div class="w-1/2">
+				<h1 class="text-center text-2xl font-bold mb-4">График отзывов</h1>
+				<div class="bg-white w-full h-[550px] p-4">
+					<FeedbacksChart />
+				</div>
+			</div> -->
+		</div>
 	</div>
 </template>
