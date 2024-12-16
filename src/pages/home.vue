@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { NDataTable, NCard, NDatePicker, NSelect } from 'naive-ui'
+import { NDataTable, NDatePicker, NSelect } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
 import { useFeedbackStore } from '@/stores/feedbackStore'
-import { h, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { formatTimestamp } from '@/utils/format-timestamp'
-import {
-	IFeedbackResponse,
-	IFeedbackStatResponse
-} from '@/types/feedback.interface'
+import { useRoute } from 'vue-router'
 
-// const data = ref<IFeedbackStatResponse>()
+const route = useRoute()
+
 const dateRange = ref<[number, number]>()
-const selectValue = ref('ru')
+const selectLang = ref('ru')
 const language = [
 	{
 		label: 'Русский',
@@ -29,67 +27,101 @@ const language = [
 
 const feedbackStore = useFeedbackStore()
 
-feedbackStore.getFeedbacks('2024-01-01', '2024-12-31', 'ru')
-feedbackStore.getFeedbackStat('2024-01-01', '2024-12-31', 'ru')
+// const columnsFeedbacks: DataTableColumns<IFeedbackResponse> = [
+// 	{
+// 		title: 'Question',
+// 		key: 'Question',
+// 		className: 'w-96'
+// 	},
+// 	{
+// 		title: 'Answer',
+// 		key: 'Answer',
+// 		align: 'center'
+// 	},
+// 	{
+// 		title: 'DeviceName',
+// 		key: 'DeviceName',
+// 		align: 'center'
+// 	},
+// 	{
+// 		title: 'Lang',
+// 		key: 'Lang',
+// 		align: 'center'
+// 	},
+// 	{
+// 		title: 'Date',
+// 		key: 'Date',
+// 		align: 'center'
+// 	},
+// 	{
+// 		title: 'Time',
+// 		key: 'Time',
+// 		align: 'center'
+// 	}
+// ]
 
-const columnsFeedbacks: DataTableColumns<IFeedbackResponse> = [
+const columns: DataTableColumns<typeof tableData> = [
 	{
-		title: 'Question',
-		key: 'Question',
-		className: 'w-96'
+		title: 'Вопрос',
+		key: 'Question'
 	},
 	{
-		title: 'Answer',
+		title: 'Ответ',
 		key: 'Answer',
+		width: 200,
+		titleAlign: 'center',
 		align: 'center'
 	},
 	{
-		title: 'DeviceName',
-		key: 'DeviceName',
+		title: 'Процент',
+		key: 'Percent',
+		width: 130,
+		titleAlign: 'center',
 		align: 'center'
 	},
 	{
-		title: 'Lang',
-		key: 'Lang',
-		align: 'center'
-	},
-	{
-		title: 'Date',
-		key: 'Date',
-		align: 'center'
-	},
-	{
-		title: 'Time',
-		key: 'Time',
-		align: 'center'
-	}
-]
-const columnsFeedbackStat: DataTableColumns<IFeedbackStatResponse> = [
-	{
-		title: 'Question',
-		key: 'Question',
-		className: 'w-96',
-		rowSpan: (_, rowIndex) => (rowIndex === 0 ? 2 : 1)
-	},
-	{
-		title: 'AnswerData',
-		key: 'AnswerData',
-		align: 'center'
-	},
-	{
-		title: 'TotalAnswersCount',
-		key: 'TotalAnswersCount',
+		title: 'Количество',
+		key: 'Count',
+		width: 130,
+		titleAlign: 'center',
 		align: 'center'
 	}
 ]
 
-watch([dateRange, selectValue], () => {
+const tableData = computed(() => {
+	const data = feedbackStore.feedbackStat?.Data.flatMap(item => {
+		const totalCount = item.AnswerData.reduce(
+			(sum, item) => sum + item.Count,
+			0
+		)
+		return item.AnswerData.map((answer, index) => ({
+			Question: index === 0 ? item.Question : '', // Только для первого ответа отображаем Question
+			Answer: answer.Answer,
+			Percent: answer.Count ? (totalCount / answer.Count) * 100 + '%' : 0 + '%',
+			Count: answer.Count
+		}))
+	})
+
+	return data
+})
+
+onMounted(() => {
+	if (route.query.startDate && route.query.endDate) {
+		const startDate = new Date(route.query.startDate as string).getTime()
+		const endDate = new Date(route.query.endDate as string).getTime()
+		dateRange.value = [startDate, endDate]
+	}
+
+	if (route.query.lang) selectLang.value = route.query.lang as string
+})
+
+watch([dateRange, selectLang], () => {
 	if (dateRange.value?.[0] && dateRange.value?.[1]) {
 		const startDate = formatTimestamp(dateRange.value?.[0])
 		const endDate = formatTimestamp(dateRange.value?.[1])
 
-		feedbackStore.getFeedbacks(startDate, endDate, selectValue.value)
-		feedbackStore.getFeedbackStat(startDate, endDate, selectValue.value)
+		feedbackStore.getFeedbacks(startDate, endDate, selectLang.value)
+		feedbackStore.getFeedbackStat(startDate, endDate, selectLang.value)
 	}
 })
 </script>
@@ -97,7 +129,7 @@ watch([dateRange, selectValue], () => {
 <template>
 	<div>
 		<div
-			class="w-full flex items-center justify-between p-4 bg-white mb-4 sticky"
+			class="w-full flex items-center justify-between p-4 bg-white mb-6 sticky"
 		>
 			<div class="w-1/4">
 				<div class="text-base mb-1">Выберите париод</div>
@@ -112,16 +144,21 @@ watch([dateRange, selectValue], () => {
 			</div>
 			<div class="min-w-32">
 				<div class="text-base mb-1">Выберите язык</div>
-				<n-select v-model:value="selectValue" :options="language" />
+				<n-select v-model:value="selectLang" :options="language" />
 			</div>
 		</div>
-		<div>
-			<n-data-table
-				:columns="columnsFeedbackStat"
-				:data="feedbackStore.feedbackStat?.Data"
-				:max-height="500"
-				virtual-scroll
-			/>
+		<div class="w-full">
+			<div class="w-1/2">
+				<h1 class="text-center text-2xl font-bold mb-4">Статистика отзывов</h1>
+				<n-data-table
+					:columns="columns"
+					:data="tableData"
+					:max-height="500"
+					:single-line="false"
+					:bordered="false"
+					virtual-scroll
+				/>
+			</div>
 		</div>
 		<!-- <div>
 			<n-data-table

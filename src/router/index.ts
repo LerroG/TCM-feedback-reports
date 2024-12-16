@@ -41,20 +41,20 @@ router.beforeEach(to => {
 	// document.title = i18n.global.t(titleKey)
 })
 
-// router.beforeEach((to, _, next) => {
-// 	const token = localStorage.getItem('token')
+router.beforeEach((to, _, next) => {
+	const token = localStorage.getItem('token')
 
-// 	// Если маршрут требует аутентификации
-// 	if (to.matched.some(record => record.meta.requiresAuth)) {
-// 		if (token) {
-// 			next() // Пропустить, если токен есть
-// 		} else {
-// 			next(ROUTE_URL.auth()) // Перенаправить на страницу логина
-// 		}
-// 	} else {
-// 		next() // Пропустить, если маршрут не требует аутентификации
-// 	}
-// })
+	// Если маршрут требует аутентификации
+	if (to.matched.some(record => record.meta.requiresAuth)) {
+		if (token) {
+			next() // Пропустить, если токен есть
+		} else {
+			next('/auth') // Перенаправить на страницу логина
+		}
+	} else {
+		next() // Пропустить, если маршрут не требует аутентификации
+	}
+})
 
 // router.afterEach(() => {
 // 	window.scrollTo(0, 0)

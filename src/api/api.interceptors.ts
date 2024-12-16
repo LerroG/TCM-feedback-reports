@@ -1,4 +1,5 @@
-import { authService } from '@/services/auth.service'
+// import router from '@/router'
+// import { authService } from '@/services/auth.service'
 import axios, { type CreateAxiosDefaults } from 'axios'
 
 // const baseURL = window.SETTINGS.api
@@ -22,11 +23,27 @@ axiosWithAuth.interceptors.request.use(
 		return config
 	},
 	error => {
-		if (error?.response?.Code === -3 && localStorage.getItem('token')) {
+		if (error?.response?.Code === -3) {
 			localStorage.removeItem('token')
-			authService.logout()
+			// router.push('/auth')
+			// authService.logout()
 		}
 
+		return Promise.reject(error)
+	}
+)
+
+axiosWithAuth.interceptors.response.use(
+	response => {
+		if (response.data?.Code === -3) {
+			localStorage.removeItem('token')
+			// router.push('/auth')
+			// authService.logout()
+		}
+
+		return response
+	},
+	error => {
 		return Promise.reject(error)
 	}
 )
