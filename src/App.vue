@@ -19,19 +19,19 @@ const themeOverrides = ref<GlobalThemeOverrides>({
 </script>
 
 <template>
-	<AppLayout>
-		<RouterView v-slot="{ Component }">
-			<n-message-provider>
-				<n-notification-provider>
-					<n-config-provider :theme-overrides="themeOverrides" abstract>
+	<n-config-provider :theme-overrides="themeOverrides" abstract>
+		<AppLayout>
+			<RouterView v-slot="{ Component }">
+				<n-message-provider>
+					<n-notification-provider>
 						<Transition mode="out-in">
 							<component :is="Component" />
 						</Transition>
-					</n-config-provider>
-				</n-notification-provider>
-			</n-message-provider>
-		</RouterView>
-	</AppLayout>
+					</n-notification-provider>
+				</n-message-provider>
+			</RouterView>
+		</AppLayout>
+	</n-config-provider>
 </template>
 
 <style scoped>

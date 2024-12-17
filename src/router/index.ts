@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { loadLayoutMiddleware } from '@/router/middleware/loadLayout.middleware'
 import { RouteNamesEnum } from '@/router/router.types'
 import { AppLayoutsEnum } from '@/layouts/layouts.types'
-// import type { RouteLocationNormalized } from 'vue-router'
-// import i18n from '@/lib/i18n'
-// import { watch } from 'vue'
+import type { RouteLocationNormalized } from 'vue-router'
+import i18n from '@/lib/i18n'
+import { watch } from 'vue'
 
 const routes = [
 	{
@@ -19,7 +19,7 @@ const routes = [
 		component: () => import('@/pages/auth.vue'),
 		meta: {
 			layout: AppLayoutsEnum.auth,
-			titleKey: 'Авторизация'
+			titleKey: 'Authorization'
 		}
 	},
 	{
@@ -29,7 +29,7 @@ const routes = [
 ]
 
 const router = createRouter({
-	history: createWebHistory(),
+	history: createWebHistory('/reports/'),
 	routes
 })
 
@@ -37,8 +37,8 @@ router.beforeEach(loadLayoutMiddleware)
 
 router.beforeEach(to => {
 	document.title = to.meta.titleKey as string
-	// const titleKey = to.meta.titleKey as string
-	// document.title = i18n.global.t(titleKey)
+	const titleKey = to.meta.titleKey as string
+	document.title = i18n.global.t(titleKey)
 })
 
 router.beforeEach((to, _, next) => {
@@ -56,21 +56,21 @@ router.beforeEach((to, _, next) => {
 	}
 })
 
-// router.afterEach(() => {
-// 	window.scrollTo(0, 0)
-// })
+router.afterEach(() => {
+	window.scrollTo(0, 0)
+})
 
-// const setTitle = (route: RouteLocationNormalized) => {
-// 	const titleKey = route.meta.titleKey as string
-// 	document.title = i18n.global.t(titleKey)
-// }
+const setTitle = (route: RouteLocationNormalized) => {
+	const titleKey = route.meta.titleKey as string
+	document.title = i18n.global.t(titleKey)
+}
 
-// watch(
-// 	() => i18n.global.locale,
-// 	() => {
-// 		const currentRoute = router.currentRoute.value
-// 		setTitle(currentRoute)
-// 	}
-// )
+watch(
+	() => i18n.global.locale,
+	() => {
+		const currentRoute = router.currentRoute.value
+		setTitle(currentRoute)
+	}
+)
 
 export default router

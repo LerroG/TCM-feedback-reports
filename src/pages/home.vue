@@ -5,9 +5,11 @@ import { useFeedbackStore } from '@/stores/feedbackStore'
 import { computed, onMounted, ref, watch } from 'vue'
 import { formatTimestamp } from '@/utils/format-timestamp'
 import Spinner from '@/components/Spinner.vue'
-import FeedbacksChart from '@/components/FeedbacksChart.vue'
+// import FeedbacksChart from '@/components/FeedbacksChart.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { IFeedbackItem } from '@/types/feedback.interface'
+import { useI18n } from 'vue-i18n'
+import { loadLocaleMessages } from '@/lib/i18n'
 
 type Language = 'ru' | 'en' | 'uz'
 
@@ -17,11 +19,12 @@ const languageMap: Record<Language, string> = {
 	uz: "O'zbek"
 }
 
+const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
 const dateRange = ref<[number, number]>()
-const selectLang = ref('ru')
+const selectLang = ref(localStorage.getItem('lang') || 'ru')
 const language = [
 	{
 		label: 'Русский',
@@ -39,69 +42,69 @@ const language = [
 
 const feedbackStore = useFeedbackStore()
 
-const columnsFeedbacks: DataTableColumns<IFeedbackItem> = [
+const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 	{
-		title: 'Вопрос',
+		title: t('Question'),
 		key: 'Question',
-		className: 'w-96'
+		className: 'lg:w-96'
 	},
 	{
-		title: 'Ответ',
+		title: t('Answer'),
 		key: 'Answer',
 		align: 'center'
 	},
 	{
-		title: 'Имя устройства',
+		title: t('Device name'),
 		key: 'DeviceName',
 		align: 'center'
 	},
 	{
-		title: 'Язык',
+		title: t('Language'),
 		key: 'Lang',
 		align: 'center',
 		render(row) {
-			return languageMap[row.Lang as keyof typeof languageMap] || row.Lang // Если язык не найден в map, показываем код
+			return languageMap[row.Lang as keyof typeof languageMap] || row.Lang
 		}
 	},
 	{
-		title: 'Дата',
+		title: t('Date'),
 		key: 'Date',
 		align: 'center'
 	},
 	{
-		title: 'Время',
+		title: t('Time'),
 		key: 'Time',
 		align: 'center'
 	}
-]
+])
 
-const columns: DataTableColumns<typeof tableData> = [
+const columns = computed<DataTableColumns<typeof tableData>>(() => [
 	{
-		title: 'Вопрос',
+		title: t('Question'),
 		key: 'Question'
 	},
 	{
-		title: 'Ответ',
+		title: t('Answer'),
 		key: 'Answer',
 		// width: 200,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
-		title: 'Процент',
+		title: t('Percent'),
 		key: 'Percent',
 		// width: 130,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
-		title: 'Количество',
+		title: t('Quantity'),
 		key: 'Count',
 		// width: 130,
 		titleAlign: 'center',
 		align: 'center'
 	}
-]
+])
 
 const tableData = computed(() => {
 	const data = feedbackStore.feedbackStat?.Data.flatMap(item => {
@@ -110,7 +113,7 @@ const tableData = computed(() => {
 			0
 		)
 		return item.AnswerData.map((answer, index) => ({
-			Question: index === 0 ? item.Question : '', // Только для первого ответа отображаем Question
+			Question: index === 0 ? item.Question : '',
 			Answer: answer.Answer,
 			Percent: answer.Count ? (totalCount / answer.Count) * 100 + '%' : 0 + '%',
 			Count: answer.Count
@@ -119,6 +122,14 @@ const tableData = computed(() => {
 
 	return data
 })
+
+const changeLanguage = async (lang: string) => {
+	if (locale.value !== lang) {
+		await loadLocaleMessages(lang)
+		localStorage.setItem('lang', lang)
+		locale.value = lang
+	}
+}
 
 onMounted(() => {
 	if (route.query.startDate && route.query.endDate) {
@@ -159,7 +170,7 @@ watch([dateRange, selectLang], () => {
 	<div>
 		<div class="w-full flex items-center justify-between p-4 bg-white">
 			<div class="w-1/4">
-				<div class="text-base mb-1">Выберите париод</div>
+				<div class="text-base mb-1">{{ $t('Choose the period') }}</div>
 				<n-date-picker
 					v-model:value="dateRange"
 					type="daterange"
@@ -170,14 +181,18 @@ watch([dateRange, selectLang], () => {
 				/>
 			</div>
 			<div class="min-w-32">
-				<div class="text-base mb-1">Выберите язык</div>
-				<n-select v-model:value="selectLang" :options="language" />
+				<div class="text-base mb-1">{{ $t('Select the language') }}</div>
+				<n-select
+					v-model:value="selectLang"
+					@update:value="changeLanguage(selectLang)"
+					:options="language"
+				/>
 			</div>
 		</div>
 		<Transition mode="out-in">
 			<div v-if="!dateRange?.[0] || !dateRange?.[1]">
-				<h1 class="text-center text-3xl font-bold mt-6">
-					Выберите дату для отображения отзывов
+				<h1 class="mt-6 text-center text-3xl font-bold">
+					{{ $t('Select the date to display reviews') }}
 				</h1>
 			</div>
 
@@ -199,9 +214,9 @@ watch([dateRange, selectLang], () => {
 				"
 			>
 				<div class="w-full flex justify-center gap-2 my-6">
-					<div class="w-4/5">
+					<div class="w-full 2xl:w-4/5">
 						<h1 class="text-center text-2xl font-bold mb-4">
-							Статистика отзывов
+							{{ $t('Feedback statistics') }}
 						</h1>
 						<n-data-table
 							:columns="columns"
@@ -213,15 +228,17 @@ watch([dateRange, selectLang], () => {
 						/>
 					</div>
 					<!-- <div class="w-1/2">
-				<h1 class="text-center text-2xl font-bold mb-4">График отзывов</h1>
+				<h1 class="text-center text-2xl font-bold mb-4">{{ $t('Feedback schedule') }}</h1>
 				<div class="bg-white w-full h-[550px] p-4">
 					<FeedbacksChart />
 				</div>
 			</div> -->
 				</div>
 				<div class="w-full flex justify-center gap-2 my-6">
-					<div class="w-4/5">
-						<h1 class="text-center text-2xl font-bold mb-4">Все отзывы</h1>
+					<div class="w-full 2xl:w-4/5">
+						<h1 class="text-center text-2xl font-bold mb-4">
+							{{ $t('All reviews') }}
+						</h1>
 						<n-data-table
 							:columns="columnsFeedbacks"
 							:data="feedbackStore.feedbacks?.Data"
@@ -232,7 +249,7 @@ watch([dateRange, selectLang], () => {
 						/>
 					</div>
 					<!-- <div class="w-1/2">
-				<h1 class="text-center text-2xl font-bold mb-4">График отзывов</h1>
+				<h1 class="text-center text-2xl font-bold mb-4">{{ $t('Feedback schedule') }}</h1>
 				<div class="bg-white w-full h-[550px] p-4">
 					<FeedbacksChart />
 				</div>

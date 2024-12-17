@@ -13,9 +13,11 @@ import {
 	useNotification
 } from 'naive-ui'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { error } = useNotification()
 const message = useMessage()
+const { t } = useI18n()
 
 const isLoading = ref(false)
 const formRef = ref<FormInst | null>(null)
@@ -27,12 +29,18 @@ const formValue = ref<IAuthForm>({
 const rules: FormRules = {
 	Username: {
 		required: true,
-		message: 'Пожалуйста, введите имя пользователя',
+		renderMessage: () => {
+			return t('Please enter the username')
+		},
+		// message: 'Пожалуйста, введите имя пользователя',
 		trigger: 'blur'
 	},
 	Password: {
 		required: true,
-		message: 'Пожалуйста, введите пароль',
+		renderMessage: () => {
+			return t('Please enter the password')
+		},
+		// message: 'Пожалуйста, введите пароль',
 		trigger: 'blur'
 	}
 }
@@ -42,7 +50,7 @@ const handleSubmit = async (e: MouseEvent) => {
 
 	formRef.value?.validate(async errors => {
 		if (errors) {
-			message.error('Неверные данные')
+			message.error(t('Incorrect data'))
 			return
 		}
 
@@ -51,17 +59,16 @@ const handleSubmit = async (e: MouseEvent) => {
 		try {
 			const response = await authService.login(formValue.value)
 
-			// Обработка ошибок от сервера
 			if (response && response.data.Code < 0) {
 				error({
-					title: 'Произошла ошибка',
+					title: t('An error occurred'),
 					content: response.data.Msg,
 					duration: 3000,
 					keepAliveOnHover: true
 				})
 			}
 		} catch (error) {
-			message.error('Ошибка при входе. Попробуйте снова!')
+			message.error(t('Error at the entrance'))
 		} finally {
 			isLoading.value = false
 		}
@@ -73,21 +80,21 @@ const handleSubmit = async (e: MouseEvent) => {
 	<div class="bg_image w-full h-full flex justify-end">
 		<div class="w-full xl:w-1/2 flex justify-center items-center">
 			<n-space class="w-4/5 md:w-2/5 2xl:w-1/3" vertical>
-				<n-h1 class="font-bold text-5xl text-center">Вход</n-h1>
+				<n-h1 class="font-bold text-5xl text-center">{{ $t('Entrance') }}</n-h1>
 				<n-form ref="formRef" :model="formValue" :rules="rules">
-					<n-form-item label="Имя пользователя" path="Username">
+					<n-form-item :label="$t('Username')" path="Username">
 						<n-input
 							v-model:value="formValue.Username"
-							placeholder="Имя пользователя"
+							:placeholder="$t('Username')"
 							round
 						/>
 					</n-form-item>
-					<n-form-item label="Пароль" path="Password">
+					<n-form-item :label="$t('Password')" path="Password">
 						<n-input
 							v-model:value="formValue.Password"
 							show-password-on="click"
 							type="password"
-							placeholder="Пароль"
+							:placeholder="$t('Password')"
 							round
 						/>
 					</n-form-item>
@@ -99,7 +106,7 @@ const handleSubmit = async (e: MouseEvent) => {
 							size="large"
 							:loading="isLoading"
 						>
-							Войти
+							{{ $t('Enter') }}
 						</n-button>
 					</n-space>
 				</n-form>

@@ -2,8 +2,8 @@ import router from '@/router'
 // import { authService } from '@/services/auth.service'
 import axios, { type CreateAxiosDefaults } from 'axios'
 
-// const baseURL = window.SETTINGS.api
-const baseURL = 'http://192.168.0.100:8086/FeedbackService/json'
+const baseURL = window.SETTINGS.api
+// const baseURL = 'http://192.168.0.100:8086/FeedbackService/json'
 const options: CreateAxiosDefaults = {
 	baseURL
 }
