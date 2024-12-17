@@ -5,7 +5,11 @@ export default {
 		fontFamily: {
 			sans: ['PT Sans', 'sans-serif']
 		},
-		extend: {}
+		extend: {
+			animation: {
+				spin: 'spin 1s linear infinite'
+			}
+		}
 	},
 	plugins: []
 }

@@ -39,6 +39,8 @@ export const useFeedbackStore = defineStore('feedbackStore', () => {
 			feedbacks.value = response || null
 		} catch (err: any) {
 			handleStoreError(err, errorFeedbacks, loadingFeedbacks)
+		} finally {
+			loadingFeedbacks.value = false
 		}
 	}
 
@@ -65,6 +67,8 @@ export const useFeedbackStore = defineStore('feedbackStore', () => {
 			feedbackStat.value = response || null
 		} catch (err: any) {
 			handleStoreError(err, errorFeedbackStat, loadingFeedbackStat)
+		} finally {
+			loadingFeedbackStat.value = false
 		}
 	}
 

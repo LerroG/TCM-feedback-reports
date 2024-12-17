@@ -1,4 +1,4 @@
-// import router from '@/router'
+import router from '@/router'
 // import { authService } from '@/services/auth.service'
 import axios, { type CreateAxiosDefaults } from 'axios'
 
@@ -25,7 +25,7 @@ axiosWithAuth.interceptors.request.use(
 	error => {
 		if (error?.response?.Code === -3) {
 			localStorage.removeItem('token')
-			// router.push('/auth')
+			router.push('/auth')
 			// authService.logout()
 		}
 
@@ -37,7 +37,7 @@ axiosWithAuth.interceptors.response.use(
 	response => {
 		if (response.data?.Code === -3) {
 			localStorage.removeItem('token')
-			// router.push('/auth')
+			router.push('/auth')
 			// authService.logout()
 		}
 
