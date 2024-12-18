@@ -5,7 +5,7 @@ import { useFeedbackStore } from '@/stores/feedbackStore'
 import { computed, onMounted, ref, watch } from 'vue'
 import { formatTimestamp } from '@/utils/format-timestamp'
 import Spinner from '@/components/Spinner.vue'
-// import FeedbacksChart from '@/components/FeedbacksChart.vue'
+import FeedbacksChart from '@/components/FeedbacksChart.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { IFeedbackItem } from '@/types/feedback.interface'
 import { useI18n } from 'vue-i18n'
@@ -51,17 +51,20 @@ const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 	{
 		title: t('Answer'),
 		key: 'Answer',
+		// width: 170,
 		align: 'center'
 	},
 	{
 		title: t('Device name'),
 		key: 'DeviceName',
+		// width: 220,
 		align: 'center'
 	},
 	{
 		title: t('Language'),
 		key: 'Lang',
 		align: 'center',
+		// width: 140,
 		render(row) {
 			return languageMap[row.Lang as keyof typeof languageMap] || row.Lang
 		}
@@ -69,10 +72,12 @@ const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 	{
 		title: t('Date'),
 		key: 'Date',
+		// width: 130,
 		align: 'center'
 	},
 	{
 		title: t('Time'),
+		// width: 130,
 		key: 'Time',
 		align: 'center'
 	}
@@ -86,21 +91,21 @@ const columns = computed<DataTableColumns<typeof tableData>>(() => [
 	{
 		title: t('Answer'),
 		key: 'Answer',
-		// width: 200,
+		width: 200,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
 		title: t('Percent'),
 		key: 'Percent',
-		// width: 130,
+		width: 130,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
 		title: t('Quantity'),
 		key: 'Count',
-		// width: 130,
+		width: 130,
 		titleAlign: 'center',
 		align: 'center'
 	}
@@ -169,7 +174,7 @@ watch([dateRange, selectLang], () => {
 <template>
 	<div>
 		<div class="w-full flex items-center justify-between p-4 bg-white">
-			<div class="w-1/4">
+			<div class="2xl:w-1/4">
 				<div class="text-base mb-1">{{ $t('Choose the period') }}</div>
 				<n-date-picker
 					v-model:value="dateRange"
@@ -177,6 +182,8 @@ watch([dateRange, selectLang], () => {
 					:first-day-of-week="0"
 					format="dd.MM.yyyy"
 					:is-date-disabled="(curr: number) => curr > Date.now()"
+					start-placeholder="От"
+					end-placeholder="До"
 					clearable
 				/>
 			</div>
@@ -213,8 +220,10 @@ watch([dateRange, selectLang], () => {
 					feedbackStore.feedbackStat?.Code === 0
 				"
 			>
-				<div class="w-full flex justify-center gap-2 my-6">
-					<div class="w-full 2xl:w-4/5">
+				<div
+					class="w-full flex flex-col-reverse 2xl:flex-row justify-center gap-2"
+				>
+					<div class="w-full 2xl:w-1/2 my-6">
 						<h1 class="text-center text-2xl font-bold mb-4">
 							{{ $t('Feedback statistics') }}
 						</h1>
@@ -227,12 +236,14 @@ watch([dateRange, selectLang], () => {
 							virtual-scroll
 						/>
 					</div>
-					<!-- <div class="w-1/2">
-				<h1 class="text-center text-2xl font-bold mb-4">{{ $t('Feedback schedule') }}</h1>
-				<div class="bg-white w-full h-[550px] p-4">
-					<FeedbacksChart />
-				</div>
-			</div> -->
+					<div class="w-full 2xl:w-1/2 my-6">
+						<h1 class="text-center text-2xl font-bold mb-4">
+							{{ $t('Feedback schedule') }}
+						</h1>
+						<div class="bg-white w-full h-[550px] p-4">
+							<FeedbacksChart />
+						</div>
+					</div>
 				</div>
 				<div class="w-full flex justify-center gap-2 my-6">
 					<div class="w-full 2xl:w-4/5">
