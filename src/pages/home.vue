@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NDataTable, NDatePicker, NSelect, NButton, NInput } from 'naive-ui'
-import type { DataTableColumns, DataTableInst } from 'naive-ui'
+import type { DataTableColumns } from 'naive-ui'
 import { useFeedbackStore } from '@/stores/feedbackStore'
 import { computed, onMounted, ref, watch } from 'vue'
 import { formatTimestamp } from '@/utils/format-timestamp'
@@ -13,13 +13,6 @@ import { loadLocaleMessages } from '@/lib/i18n'
 import { exportToExcel } from '@/utils/export-to-excel'
 
 type Language = 'ru' | 'en' | 'uz'
-// type Row = {
-// 	Answer: string
-// 	Percent: string
-// 	Count: number
-// 	rowSpan: number
-// 	Question?: string
-// }
 
 const languageMap: Record<Language, string> = {
 	ru: 'Русский',
@@ -60,7 +53,7 @@ const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 		sorter: 'default'
 	},
 	{
-		title: t('Answer'),
+		title: t('Evaluation'),
 		key: 'Answer',
 		align: 'center',
 		sorter: 'default'
@@ -119,7 +112,7 @@ const columns = computed<DataTableColumns<typeof tableData>>(() => [
 		}
 	},
 	{
-		title: t('Answer'),
+		title: t('Evaluation'),
 		key: 'Answer',
 		width: 200,
 		titleAlign: 'center',
@@ -150,7 +143,9 @@ const tableData = computed(() => {
 		return item.AnswerData.map((answer, index) => ({
 			Question: index === 0 ? item.Question : '',
 			Answer: answer.Answer,
-			Percent: answer.Count ? (totalCount / answer.Count) * 100 + '%' : 0 + '%',
+			Percent: totalCount
+				? ((answer.Count / totalCount) * 100).toFixed(1) + '%'
+				: '0%',
 			Count: answer.Count,
 			rowSpan: index === 0 ? item.AnswerData.length : 1
 		}))
@@ -158,32 +153,6 @@ const tableData = computed(() => {
 
 	return data || []
 })
-
-// const tableData = computed(() => {
-// 	const data = feedbackStore.feedbackStat?.Data.flatMap(item => {
-// 		const totalCount = item.AnswerData.reduce(
-// 			(sum, answer) => sum + answer.Count,
-// 			0
-// 		)
-// 		return item.AnswerData.map((answer, index) => {
-// 			const row: Row = {
-// 				Answer: answer.Answer,
-// 				Percent: answer.Count ? (totalCount / answer.Count) * 100 + '%' : '0%',
-// 				Count: answer.Count,
-// 				rowSpan: index === 0 ? item.AnswerData.length : 1
-// 			}
-
-// 			// Добавляем поле Question только для первой строки (index === 0)
-// 			if (index === 0) {
-// 				row.Question = item.Question
-// 			}
-
-// 			return row
-// 		})
-// 	})
-
-// 	return data || []
-// })
 
 const filteredData = computed(() => {
 	if (!searchQuery.value) {
@@ -201,7 +170,7 @@ const filteredData = computed(() => {
 
 const handleExportFeedbackStat = () => {
 	const question = t('Question')
-	const answer = t('Answer')
+	const answer = t('Evaluation')
 	const percent = t('Percent')
 	const count = t('Quantity')
 
@@ -224,7 +193,7 @@ const handleExportFeedbackStat = () => {
 
 const handleExportFeedbacks = () => {
 	const question = t('Question')
-	const answer = t('Answer')
+	const answer = t('Evaluation')
 	const deviceName = t('Device name')
 	const language = t('Language')
 	const date = t('Date')

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { PieChart } from 'echarts/charts'
+import { PieChart, LineChart } from 'echarts/charts'
 import {
 	TitleComponent,
 	TooltipComponent,
-	LegendComponent
+	LegendComponent,
+	GridComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { computed, ref } from 'vue'
@@ -18,17 +19,19 @@ const { t } = useI18n()
 use([
 	CanvasRenderer,
 	PieChart,
+	LineChart,
 	TitleComponent,
 	TooltipComponent,
-	LegendComponent
+	LegendComponent,
+	GridComponent
 ])
 
 const dataForChart = computed(() => {
 	// Определим категории с их возможными ответами
-	const Excellent = t('All Excellent')
-	const Good = t('All Good')
-	const Satisfactory = t('All Satisfactory')
-	const Poor = t('All Poor')
+	const Excellent = t('Excellent')
+	const Good = t('Good')
+	const Satisfactory = t('Satisfactory')
+	const Poor = t('Poor')
 
 	const categories = {
 		[Excellent]: [
@@ -93,37 +96,50 @@ const dataForChart = computed(() => {
 })
 
 const option = ref<EChartsOption>({
-	color: ['#91cc75', '#5470c6', '#fac858', '#ee6666'],
-	tooltip: {
-		trigger: 'item',
-		formatter: '{a} <br/>{b} : <strong>{c}</strong> ({d}%)'
-	},
-	legend: {
-		orient: 'vertical',
-		left: 'left',
-		data: [
-			t('All Excellent'),
-			t('All Good'),
-			t('All Satisfactory'),
-			t('All Poor')
-		]
-	},
-	series: [
-		{
-			name: 'Отзывы',
-			type: 'pie',
-			// radius: '55%',
-			center: ['50%', '60%'],
-			data: dataForChart.value,
-			emphasis: {
-				itemStyle: {
-					shadowBlur: 10,
-					shadowOffsetX: 0,
-					shadowColor: 'rgba(0, 0, 0, 0.5)'
-				}
-			}
-		}
-	]
+	xAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [820, 932, 901, 934, 1290, 1330, 1320],
+      type: 'line',
+      smooth: true
+    }
+  ]
+	// color: ['#91cc75', '#5470c6', '#fac858', '#ee6666'],
+	// tooltip: {
+	// 	trigger: 'item',
+	// 	formatter: '{a} <br/>{b} : <strong>{c}</strong> ({d}%)'
+	// },
+	// legend: {
+	// 	orient: 'horizontal',
+	// 	data: [
+	// 		t('Excellent'),
+	// 		t('Good'),
+	// 		t('Satisfactory'),
+	// 		t('Poor')
+	// 	]
+	// },
+	// // series: [
+	// // 	{
+	// // 		name: 'Отзывы',
+	// // 		type: 'line',
+	// // 		// radius: '55%',
+	// // 		// center: ['50%', '60%'],
+	// // 		data: dataForChart.value,
+	// // 		emphasis: {
+	// // 			itemStyle: {
+	// // 				shadowBlur: 10,
+	// // 				shadowOffsetX: 0,
+	// // 				shadowColor: 'rgba(0, 0, 0, 0.5)'
+	// // 			}
+	// // 		}
+	// // 	}
+	// // ]
 })
 </script>
 
