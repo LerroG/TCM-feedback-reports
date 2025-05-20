@@ -27,119 +27,45 @@ use([
 ])
 
 const dataForChart = computed(() => {
-	// Определим категории с их возможными ответами
-	const Excellent = t('Excellent')
-	const Good = t('Good')
-	const Satisfactory = t('Satisfactory')
-	const Poor = t('Poor')
+	const result: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
 
-	const categories = {
-		[Excellent]: [
-			t('Excellent'),
-			t('Yes'),
-			t('Very satisfied'),
-			t('Very comfortable'),
-			t('Very convenient'),
-			t('Very safe'),
-			t('Very interesting')
-		],
-		[Good]: [
-			t('Good'),
-			t('Partially'),
-			t('Satisfied'),
-			t('Comfortable'),
-			t('Convenient'),
-			t('Safe'),
-			t('Interesting')
-		],
-		[Satisfactory]: [
-			t('Satisfactory'),
-			t('Acceptable'),
-			t('Satisfactory Website')
-		],
-		[Poor]: [
-			t('Poor'),
-			t('No'),
-			t('Not satisfied'),
-			t('Uncomfortable'),
-			t('Inconvenient'),
-			t('Unsafe'),
-			t('Not interesting')
-		]
-	}
-
-	const result: { value: number; name: string }[] = []
-
-	// Проходим по категориям и суммируем количество для каждого ответа
-	Object.keys(categories).forEach(category => {
-		let totalCount = 0
-		const categoryAnswers = categories[category]
-
-		// Проходим по данным и суммируем количество для каждого ответа, который попадает в категорию
-		feedbackStore.feedbackStat?.Data.forEach(item => {
-			item.AnswerData.forEach(answer => {
-				if (categoryAnswers.includes(answer.Answer)) {
-					totalCount += answer.Count
-				}
-			})
-		})
-
-		// Добавляем объект с результатами в итоговый массив
-
-		result.push({
-			value: totalCount,
-			name: category
+	feedbackStore.feedbackStat?.Data.forEach(item => {
+		item.AnswerData.forEach(answer => {
+			if (result.hasOwnProperty(answer.Answer)) {
+				result[answer.Answer] += answer.Count
+			}
 		})
 	})
 
-	return result
+	return Object.entries(result).map(([key, value]) => ({
+		value,
+		name: `${t('Evaluation')} ${key}`
+	}))
 })
 
 const option = ref<EChartsOption>({
-	xAxis: {
-    type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-    {
-      data: [820, 932, 901, 934, 1290, 1330, 1320],
-      type: 'line',
-      smooth: true
-    }
-  ]
-	// color: ['#91cc75', '#5470c6', '#fac858', '#ee6666'],
-	// tooltip: {
-	// 	trigger: 'item',
-	// 	formatter: '{a} <br/>{b} : <strong>{c}</strong> ({d}%)'
-	// },
-	// legend: {
-	// 	orient: 'horizontal',
-	// 	data: [
-	// 		t('Excellent'),
-	// 		t('Good'),
-	// 		t('Satisfactory'),
-	// 		t('Poor')
-	// 	]
-	// },
-	// // series: [
-	// // 	{
-	// // 		name: 'Отзывы',
-	// // 		type: 'line',
-	// // 		// radius: '55%',
-	// // 		// center: ['50%', '60%'],
-	// // 		data: dataForChart.value,
-	// // 		emphasis: {
-	// // 			itemStyle: {
-	// // 				shadowBlur: 10,
-	// // 				shadowOffsetX: 0,
-	// // 				shadowColor: 'rgba(0, 0, 0, 0.5)'
-	// // 			}
-	// // 		}
-	// // 	}
-	// // ]
+	color: ['#ee6666', '#fac858', '#f7e463', '#91cc75', '#3ba272'],
+	tooltip: {
+		trigger: 'item',
+		formatter: '{a} <br/>{b}: <strong>{c}</strong> ({d}%)'
+	},
+	legend: {
+		orient: 'horizontal'
+	},
+	series: [
+		{
+			name: t('Reviews'),
+			type: 'pie',
+			data: dataForChart.value,
+			emphasis: {
+				itemStyle: {
+					shadowBlur: 10,
+					shadowOffsetX: 0,
+					shadowColor: 'rgba(0, 0, 0, 0.5)'
+				}
+			}
+		}
+	]
 })
 </script>
 

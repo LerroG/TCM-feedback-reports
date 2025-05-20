@@ -29,6 +29,6 @@ export interface IFeedbackStatItem {
 }
 
 export interface IFeedbackStatAnswerItem {
-	Answer: string
+	Answer: number
 	Count: number
 }

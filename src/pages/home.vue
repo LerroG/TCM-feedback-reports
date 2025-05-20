@@ -49,25 +49,28 @@ const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 	{
 		title: t('Question'),
 		key: 'Question',
-		className: 'lg:w-96',
+		className: 'w-60 lg:w-96',
 		sorter: 'default'
 	},
 	{
 		title: t('Evaluation'),
 		key: 'Answer',
 		align: 'center',
+		minWidth: 100,
 		sorter: 'default'
 	},
 	{
 		title: t('Device name'),
 		key: 'DeviceName',
 		align: 'center',
+		minWidth: 100,
 		sorter: 'default'
 	},
 	{
 		title: t('Language'),
 		key: 'Lang',
 		align: 'center',
+		minWidth: 100,
 		defaultFilterOptionValues: ['ru', 'uz', 'en'],
 		filterOptions: [
 			{
@@ -94,11 +97,13 @@ const columnsFeedbacks = computed<DataTableColumns<IFeedbackItem>>(() => [
 		title: t('Date'),
 		key: 'Date',
 		align: 'center',
+		minWidth: 100,
 		sorter: 'default'
 	},
 	{
 		title: t('Time'),
 		key: 'Time',
+		minWidth: 100,
 		align: 'center'
 	}
 ])
@@ -107,6 +112,7 @@ const columns = computed<DataTableColumns<typeof tableData>>(() => [
 	{
 		title: t('Question'),
 		key: 'Question',
+		minWidth: 250,
 		rowSpan: (_, rowIndex) => {
 			return tableData.value[rowIndex].rowSpan
 		}
@@ -114,21 +120,21 @@ const columns = computed<DataTableColumns<typeof tableData>>(() => [
 	{
 		title: t('Evaluation'),
 		key: 'Answer',
-		width: 200,
+		minWidth: 80,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
 		title: t('Percent'),
 		key: 'Percent',
-		width: 130,
+		minWidth: 80,
 		titleAlign: 'center',
 		align: 'center'
 	},
 	{
 		title: t('Quantity'),
 		key: 'Count',
-		width: 130,
+		minWidth: 80,
 		titleAlign: 'center',
 		align: 'center'
 	}
@@ -310,10 +316,8 @@ watch([dateRange, selectLang], () => {
 					feedbackStore.feedbackStat?.Code === 0
 				"
 			>
-				<div
-					class="w-full flex flex-col-reverse 2xl:flex-row justify-center gap-2"
-				>
-					<div class="w-full 2xl:w-1/2 my-6">
+				<div class="w-full flex flex-col justify-center items-center gap-2">
+					<div class="w-full 2xl:w-4/5 my-6">
 						<h1 class="text-center text-2xl font-bold mb-4">
 							{{ $t('Feedback statistics') }}
 						</h1>
@@ -330,7 +334,7 @@ watch([dateRange, selectLang], () => {
 							:bordered="false"
 						/>
 					</div>
-					<div class="w-full 2xl:w-1/2 my-6">
+					<div class="w-full 2xl:w-4/5 my-6">
 						<h1 class="text-center text-2xl font-bold mb-4">
 							{{ $t('Feedback schedule') }}
 						</h1>
